@@ -10,11 +10,13 @@ import bcrypt from "bcryptjs";
 
 // ?*** USER CREATE
 export const singUp = async (req, res, next) => {
-  req.body.isVerified = false;
-
   try {
-    const newUser = await User.create(req.body);
     const OTP = generateOtp(6);
+    const newUser = await User.create({
+      ...req.body,
+      verify_otp: OTP,
+      isVerified: false,
+    });
     const subject = "OTP for email Verification";
     const html = verifyEmailTemplate(req.body.name, OTP);
     console.log("OTP", OTP);
@@ -28,6 +30,7 @@ export const singUp = async (req, res, next) => {
     if (!data)
       return next(new AppError("Something went wrong on sending email", 500));
     newUser.verify_otp = OTP;
+    console.log("Saving user with OTP:", newUser.verify_otp);
     await newUser.save();
 
     return res.success(
@@ -63,7 +66,6 @@ export const verifyEmail = async (req, res, next) => {
 };
 
 //?*** USER LOGIN
-
 export const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -93,6 +95,22 @@ export const login = async (req, res, next) => {
     delete userObj.password;
     delete userObj.tokens;
     return res.success(userObj, "Login successful", 200, token);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//?*** FORGOT PASSWORD
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const isEmail = await User.findOne({ email });
+    console.log("isEmail", isEmail);
+    if (!isEmail) {
+      return res.fail("There is no user with this id", 404);
+    }
+    const otp = generateOtp(6);
   } catch (error) {
     next(error);
   }

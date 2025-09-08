@@ -19,3 +19,9 @@ export const loginValidationSchema = yup.object({
     .length(8, "Password must be exactly 8 characters") // you can change to min(8) if needed
     .required("Password is required"),
 });
+export const forgotValidation = yup.object({
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
+});

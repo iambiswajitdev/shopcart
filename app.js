@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(responseHandler);
 
 // ?*** APP ROUTE
-app.use("/api/v1/users", userRoute);
+app.use("/api/v1", userRoute);
 
 //?**  Global error handler
 app.use(errorHandler);
