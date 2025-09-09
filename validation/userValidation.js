@@ -25,3 +25,10 @@ export const forgotValidation = yup.object({
     .email("Invalid email format")
     .required("Email is required"),
 });
+
+export const passwordValidation = yup.object({
+  password: yup
+    .string()
+    .length(8, "Password must be exactly 8 characters") // you can change to min(8) if needed
+    .required("Password is required"),
+});

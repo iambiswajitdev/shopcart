@@ -11,9 +11,12 @@ import bcrypt from "bcryptjs";
 // ?*** USER CREATE
 export const singUp = async (req, res, next) => {
   try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    console.log("hashedPassword", hashedPassword);
     const OTP = generateOtp(6);
     const newUser = await User.create({
       ...req.body,
+      password: hashedPassword,
       verify_otp: OTP,
       isVerified: false,
     });
@@ -77,9 +80,7 @@ export const login = async (req, res, next) => {
     if (!user) {
       return res.fail("Invalid email or account not verified", 400);
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       return res.fail("Invalid password", 400);
     }
@@ -104,13 +105,64 @@ export const login = async (req, res, next) => {
 
 export const forgotPassword = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    const isEmail = await User.findOne({ email });
-    console.log("isEmail", isEmail);
-    if (!isEmail) {
+    const { email, isResend } = req.body;
+    const user = await User.findOne({ email });
+    console.log("isEmail", user);
+    if (!user) {
       return res.fail("There is no user with this id", 404);
     }
-    const otp = generateOtp(6);
+    if (isResend) {
+      const otp = generateOtp(6);
+      user.verify_otp = otp;
+      user.save();
+      const from = config.smtp.user;
+      const subject = "Otp Is Re-send";
+      const html = verifyEmailTemplate(user.name, otp);
+      const data = await sendEmail({ from, to: user.email, subject, html });
+      console.log("data", data);
+      if (!data) {
+        res.fail("Something went wrong on sending email!", 500);
+      }
+      res.success("Re send Otp send to email. Please check your email.", 200);
+    } else {
+      const otp = generateOtp(6);
+      user.verify_otp = otp;
+      user.save();
+      const from = config.smtp.user;
+      const subject = "Please reset your password";
+      const html = verifyEmailTemplate(user.name, otp);
+      const data = await sendEmail({ from, to: user.email, subject, html });
+      console.log("data", data);
+      if (!data) {
+        res.fail("Something went wrong on sending email!", 500);
+      }
+      res.success("Otp send to email. Please check your email.", 200);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+//?*** USER NEW PASSWORD SET
+export const newPasswordSet = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({
+      email: email,
+      isVerified: true,
+    }).select("+password");
+    console.log("user", user);
+
+    if (!user) {
+      return res.fail("Invalid email or account not verified", 400);
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("hashedPassword", hashedPassword);
+
+    user.password = hashedPassword;
+    await user.save();
+    return res.success("New password set successful", 200);
   } catch (error) {
     next(error);
   }
