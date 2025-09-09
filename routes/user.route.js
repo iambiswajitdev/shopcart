@@ -14,7 +14,6 @@ import {
   userValidationSchema,
 } from "../validation/userValidation.js";
 const router = express.Router();
-
 router.post("/sign-up", validate(userValidationSchema), singUp);
 router.post("/email-verify", verifyEmail);
 router.post("/login", validate(loginValidationSchema), login);
