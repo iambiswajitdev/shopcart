@@ -1,6 +1,7 @@
 import express from "express";
 import userRoute from "./routes/user.route.js";
 import uploadRoutes from "./routes/upload.routes.js";
+import productRoutes from "./routes/product.routes.js";
 import { responseHandler } from "./middleware/responseHandler.js";
 import errorHandler from "./middleware/errorHandler.js";
 const app = express();
@@ -13,6 +14,8 @@ app.use(responseHandler);
 app.use("/api/v1", userRoute);
 
 app.use("/api/v1", uploadRoutes);
+
+app.use("/api/v1", productRoutes);
 
 // Serve uploaded files statically
 app.use("/uploads", express.static("uploads"));

@@ -8,6 +8,9 @@ const categorySchema = mongoose.Schema({
   image: {
     type: String,
   },
+  slug: {
+    type: String,
+  },
 });
 
 const Category = mongoose.model("Category", categorySchema);
