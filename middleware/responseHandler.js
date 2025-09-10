@@ -5,13 +5,16 @@ export const responseHandler = (req, res, next) => {
     statusCode = 200,
     token = ""
   ) => {
-    return res.status(statusCode).json({
+    const response = {
       success: true,
       status: "success",
       message,
       data,
-      token,
-    });
+    };
+    if (token) {
+      response.token = token;
+    }
+    return res.status(statusCode).json(response);
   };
 
   res.fail = (message = "Something went wrong", statusCode = 400) => {

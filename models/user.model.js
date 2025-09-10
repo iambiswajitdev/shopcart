@@ -29,6 +29,12 @@ const userSchema = mongoose.Schema({
     select: false,
     default: "",
   },
+  address: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
 });
 
 // Compare passwords
