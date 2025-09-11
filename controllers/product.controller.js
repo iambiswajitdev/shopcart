@@ -38,10 +38,11 @@ export const getCategory = async (req, res, next) => {
     next(error);
   }
 };
+
 // ?** CATEGORY UPDATED BY ID
 export const updateCategory = async (req, res, next) => {
   try {
-    const { name, userId, id } = req.body;
+    const { name, userId, id, status } = req.body;
     const isCateId = idChecker(id);
     const isUserId = idChecker(userId);
     //?*Check Category exist or not
@@ -55,7 +56,7 @@ export const updateCategory = async (req, res, next) => {
 
     const data = await Category.findByIdAndUpdate(
       { _id: id },
-      { $set: { name, slug: generateSlug(name) } },
+      { $set: { name, slug: generateSlug(name), status } },
       { new: true, runValidators: true }
     );
     res.success(data, "Data updated successfully", 200);
@@ -95,6 +96,47 @@ export const createSubCategory = async (req, res, next) => {
     console.log("reqObj", reqObj);
 
     const data = await Category.create(reqObj);
+
+    res.success(data, "Data added successfully", 200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ?*** UPDATE SUB-CATEGORY BY CATEGORY ID
+export const updateSubCategory = async (req, res, next) => {
+  try {
+    const { name, id, userId } = req.body || {};
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
+    if (!req.file || !name || !imageUrl || !id || !userId) {
+      res.fail("Field is required");
+    }
+    const isSubCatId = idChecker(id);
+    const isUserId = idChecker(userId);
+    //?*Check Category exist or not
+    if (!isSubCatId) {
+      res.fail("Sub Category Not Found", 404);
+    }
+    //?*Check Category exist or not
+    if (!isUserId) {
+      res.fail("User Not Found", 404);
+    }
+    //?*Check Category exist or not
+    const slug = generateSlug(name);
+    const reqObj = {
+      name,
+      slug,
+      image: imageUrl,
+    };
+    console.log("reqObj", reqObj);
+
+    const data = await Category.findByIdAndUpdate(
+      { _id: id },
+      { $set: reqObj },
+      { new: true, runValidators: true }
+    );
 
     res.success(data, "Data added successfully", 200);
   } catch (error) {

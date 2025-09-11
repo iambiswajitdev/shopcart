@@ -5,6 +5,7 @@ import {
   createSubCategory,
   getCategory,
   updateCategory,
+  updateSubCategory,
 } from "../controllers/product.controller.js";
 import { upload } from "../utils/upload.js";
 const router = express.Router();
@@ -21,4 +22,10 @@ router.post(
 
 router.get("/getCategory", getCategory);
 router.patch("/updateCategory", verifyToken, updateCategory);
+router.patch(
+  "/updateSubCategory",
+  verifyToken,
+  upload.single("image"),
+  updateSubCategory
+);
 export default router;

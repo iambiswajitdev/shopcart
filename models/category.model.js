@@ -17,6 +17,11 @@ const categorySchema = mongoose.Schema({
     ref: "Category",
     default: null,
   },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active",
+  },
 });
 
 const Category = mongoose.model("Category", categorySchema);
