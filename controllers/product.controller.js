@@ -138,7 +138,7 @@ export const updateSubCategory = async (req, res, next) => {
       { new: true, runValidators: true }
     );
 
-    res.success(data, "Data added successfully", 200);
+    res.success(data, "Data updated successfully", 200);
   } catch (error) {
     next(error);
   }
