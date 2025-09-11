@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const categorySchema = mongoose.Schema({
   name: {
     type: String,
@@ -10,6 +9,13 @@ const categorySchema = mongoose.Schema({
   },
   slug: {
     type: String,
+    unique: true,
+  },
+  userId: String,
+  parent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category",
+    default: null,
   },
 });
 
