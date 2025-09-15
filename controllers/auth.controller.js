@@ -10,7 +10,12 @@ import bcrypt from "bcryptjs";
 
 // ?*** USER CREATE
 export const singUp = async (req, res, next) => {
+  const { email } = req.body;
   try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.fail("Email already exists. Please login instead.", 400);
+    }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     console.log("hashedPassword", hashedPassword);
     const OTP = generateOtp(6);
@@ -20,6 +25,9 @@ export const singUp = async (req, res, next) => {
       verify_otp: OTP,
       isVerified: false,
     });
+
+    console.log("newUser", newUser);
+
     const subject = "OTP for email Verification";
     const html = verifyEmailTemplate(req.body.name, OTP);
     console.log("OTP", OTP);

@@ -6,7 +6,10 @@ const errorHandler = (err, req, res, next) => {
   // Default values
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
-
+  // if (err.statusCode === 400) {
+  //   const field = Object.keys(err.keyValue);
+  //   err = new AppError(`Duplicate field value: ${field} already exists`, 400);
+  // }
   // Handle Mongo duplicate key error (code 11000)
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue);
