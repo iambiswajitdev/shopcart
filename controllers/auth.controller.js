@@ -103,7 +103,7 @@ export const login = async (req, res, next) => {
     const userObj = user.toObject();
     delete userObj.password;
     delete userObj.tokens;
-    return res.success(userObj, "Login successful", 200, token);
+    return res.success("Login successful", 200, userObj, token);
   } catch (error) {
     next(error);
   }
