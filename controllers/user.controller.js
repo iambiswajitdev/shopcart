@@ -18,7 +18,7 @@ export const getUserById = async (req, res, next) => {
     if (!users) {
       res.fail("User Not found", 404);
     }
-    res.success(users, "User fetch successfully", 200);
+    res.success("User fetch successfully", 200, users);
   } catch (error) {
     next(error);
   }
