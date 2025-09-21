@@ -35,6 +35,7 @@ const userSchema = mongoose.Schema({
   phone: {
     type: String,
   },
+  profile_img: String,
 });
 
 // Compare passwords

@@ -17,9 +17,11 @@ import {
   getAllUser,
   getUserById,
   userDeleteById,
+  userProfileUpload,
   userUpdateById,
 } from "../controllers/user.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
+import { upload } from "../utils/upload.js";
 const router = express.Router();
 
 //?*** AUTH ROUTE
@@ -37,4 +39,5 @@ router.get("/get-users", verifyToken, getAllUser);
 router.get("/get-users/:id", verifyToken, getUserById);
 router.patch("/user-update", verifyToken, userUpdateById);
 router.delete("/user-delete", verifyToken, userDeleteById);
+router.post("/profile_upload", upload.single("image"), userProfileUpload);
 export default router;

@@ -1,16 +1,31 @@
 import multer from "multer";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import dotenv from "dotenv";
+import config from "../config.js";
 
-// Common storage config
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+dotenv.config();
+
+// 1. Configure Cloudinary
+cloudinary.config({
+  cloud_name: config.image.cloudinary_name,
+  api_key: config.image.cloudinary_apiKey,
+  api_secret: config.image.cloudinary_apiSecretKey,
+});
+
+// 2. Create Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "shopCart", // Cloudinary folder name
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    public_id: (req, file) => {
+      // optional: generate custom filename
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      return uniqueSuffix;
+    },
   },
 });
 
-// Export multer instance
+// 3. Export multer instance
 export const upload = multer({ storage });

@@ -19,4 +19,9 @@ export default {
     user: process.env.SMTP_USERNAME,
     pass: process.env.SMTP_PASSWORD,
   },
+  image: {
+    cloudinary_name: process.env.CLOUDINARY_CLOUD_NAME,
+    cloudinary_apiKey: process.env.CLOUDINARY_API_KEY,
+    cloudinary_apiSecretKey: process.env.CLOUDINARY_API_SECRET,
+  },
 };

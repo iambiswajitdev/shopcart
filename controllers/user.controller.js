@@ -26,6 +26,8 @@ export const getUserById = async (req, res, next) => {
 
 // ?*** UPDATED USER BY THERE ID
 export const userUpdateById = async (req, res, next) => {
+  console.log("userUpdateById", req.body);
+
   try {
     const users = await User.findByIdAndUpdate(
       { _id: req.body.id },
@@ -35,7 +37,7 @@ export const userUpdateById = async (req, res, next) => {
     if (!users) {
       res.fail("User Not found", 404);
     }
-    res.success(users, "User Updated successfully", 200);
+    res.success("User Updated successfully", 200);
   } catch (error) {
     next(error);
   }
@@ -53,6 +55,16 @@ export const userDeleteById = async (req, res, next) => {
     }
     await User.deleteOne({ _id: req.body.id });
     res.success("User Deleted successfully", 200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ?*** USER PROFILE UPLOAD
+export const userProfileUpload = async (req, res, next) => {
+  try {
+    if (!req.file) return res.fail("No file uploaded", 400);
+    res.success("Upload successful", 200, req.file.path);
   } catch (error) {
     next(error);
   }
