@@ -29,11 +29,15 @@ export const userUpdateById = async (req, res, next) => {
   console.log("userUpdateById", req.body);
 
   try {
+    if (!req.body.id) {
+      res.fail("User Not found", 404);
+    }
     const users = await User.findByIdAndUpdate(
       { _id: req.body.id },
       { $set: req.body },
       { new: true, runValidators: true }
     );
+
     if (!users) {
       res.fail("User Not found", 404);
     }
